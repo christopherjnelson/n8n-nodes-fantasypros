@@ -9,10 +9,12 @@ import {
 } from 'n8n-workflow';
 import {
 	fantasyProsApiRequest,
+	optionalPositiveInteger,
 	parseNumericIds,
 	requireArrayField,
 	requireRecord,
 	validateDate,
+	validateLimit,
 	validateSeason,
 	validateWeek,
 } from './GenericFunctions';
@@ -111,9 +113,14 @@ export class FantasyPros implements INodeType {
 
 				if (operation === 'getMany') {
 					const sport = this.getNodeParameter('sport', itemIndex) as string;
+					const returnAll = this.getNodeParameter('returnAll', itemIndex) as boolean;
+					const limit = returnAll
+						? undefined
+						: validateLimit(this.getNodeParameter('limit', itemIndex) as number, this);
 					const options = this.getNodeParameter('options', itemIndex, {}) as IDataObject;
 					const query: IDataObject = {};
-					if (Number(options.playerId) > 0) query.player = Number(options.playerId);
+					const playerId = optionalPositiveInteger(options.playerId, this, 'Player ID');
+					if (playerId !== undefined) query.player = playerId;
 					if (typeof options.updatedSince === 'string' && options.updatedSince) {
 						query.update = validateDate(options.updatedSince.slice(0, 10), this, 'Updated Since');
 					}
@@ -130,10 +137,7 @@ export class FantasyPros implements INodeType {
 						query,
 					);
 					let players = requireArrayField(response, 'players', this, 'Player Get Many');
-					if (!(this.getNodeParameter('returnAll', itemIndex) as boolean)) {
-						const limit = this.getNodeParameter('limit', itemIndex) as number;
-						players = players.slice(0, limit);
-					}
+					if (limit !== undefined) players = players.slice(0, limit);
 					output.push(...players.map((json) => ({ json, pairedItem: { item: itemIndex } })));
 					continue;
 				}

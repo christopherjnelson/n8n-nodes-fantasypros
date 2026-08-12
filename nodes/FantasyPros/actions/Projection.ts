@@ -9,6 +9,7 @@ import {
 	fantasyProsApiRequest,
 	parseNumericIds,
 	validateDate,
+	validateLimit,
 	validateSeason,
 	validateWeek,
 } from '../GenericFunctions';
@@ -55,6 +56,10 @@ export async function executeProjection(
 	operation: string,
 ): Promise<INodeExecutionData[]> {
 	const season = validateSeason(context.getNodeParameter('season', itemIndex) as number, context);
+	const returnAll = context.getNodeParameter('returnAll', itemIndex) as boolean;
+	const limit = returnAll
+		? undefined
+		: validateLimit(context.getNodeParameter('limit', itemIndex) as number, context);
 	const query: IDataObject = {};
 	let path: string;
 	let field: 'players' | 'player';
@@ -162,8 +167,6 @@ export async function executeProjection(
 
 	const response = await fantasyProsApiRequest.call(context, 'GET', path, query);
 	let entities = fanOutWithContext(response, field, context, label);
-	if (!(context.getNodeParameter('returnAll', itemIndex) as boolean)) {
-		entities = entities.slice(0, context.getNodeParameter('limit', itemIndex) as number);
-	}
+	if (limit !== undefined) entities = entities.slice(0, limit);
 	return entities.map((json) => ({ json, pairedItem: { item: itemIndex } }));
 }

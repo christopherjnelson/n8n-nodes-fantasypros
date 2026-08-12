@@ -4,7 +4,12 @@ import {
 	type IExecuteFunctions,
 	type INodeExecutionData,
 } from 'n8n-workflow';
-import { fanOutWithContext, fantasyProsApiRequest } from '../GenericFunctions';
+import {
+	fanOutWithContext,
+	fantasyProsApiRequest,
+	optionalPositiveInteger,
+	validateLimit,
+} from '../GenericFunctions';
 
 export async function executeNews(
 	context: IExecuteFunctions,
@@ -16,15 +21,18 @@ export async function executeNews(
 	}
 	const sport = context.getNodeParameter('sport', itemIndex) as string;
 	const returnAll = context.getNodeParameter('returnAll', itemIndex) as boolean;
-	const limit = returnAll ? 100 : (context.getNodeParameter('limit', itemIndex) as number);
-	if (!Number.isInteger(limit) || limit < 1 || limit > 100) {
-		throw new NodeOperationError(context.getNode(), 'Limit must be an integer from 1 through 100');
-	}
+	const limit = returnAll
+		? 100
+		: validateLimit(context.getNodeParameter('limit', itemIndex) as number, context, 100);
 	const query: IDataObject = { limit };
 	const options = context.getNodeParameter('newsOptions', itemIndex, {}) as IDataObject;
 	if (typeof options.category === 'string' && options.category) query.category = options.category;
-	if (Number(options.playerId) > 0) query.fpid = Number(options.playerId);
-	if (sport === 'mlb' && Number(options.mlbamId) > 0) query.MLBAMID = Number(options.mlbamId);
+	const playerId = optionalPositiveInteger(options.playerId, context, 'FantasyPros Player ID');
+	if (playerId !== undefined) query.fpid = playerId;
+	if (sport === 'mlb') {
+		const mlbamId = optionalPositiveInteger(options.mlbamId, context, 'MLBAM Player ID');
+		if (mlbamId !== undefined) query.MLBAMID = mlbamId;
+	}
 	if (typeof options.orderBy === 'string' && options.orderBy) query.order_by = options.orderBy;
 
 	const response = await fantasyProsApiRequest.call(context, 'GET', `/${sport}/news`, query);

@@ -182,6 +182,8 @@ describe('Ranking operations', () => {
 
 	it('rejects invalid seasons, weeks, IDs, operations, and response shapes before output', async () => {
 		const cases = [
+			rankingsParameters('getRankings', { returnAll: false, limit: 0 }),
+			rankingsParameters('getRankings', { rankingsOptions: { playerId: -1 } }),
 			rankingsParameters('getRankings', { season: 2011 }),
 			rankingsParameters('getRankings', { rankingsOptions: { week: 23 } }),
 			rankingsParameters('getRankings', { rankingsOptions: { expertIds: '3:nope' } }),

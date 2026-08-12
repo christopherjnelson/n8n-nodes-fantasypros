@@ -7,7 +7,9 @@ import {
 import {
 	fanOutWithContext,
 	fantasyProsApiRequest,
+	optionalPositiveInteger,
 	parseNumericIds,
+	validateLimit,
 	validateSeason,
 	validateWeek,
 } from '../GenericFunctions';
@@ -19,6 +21,10 @@ export async function executeRankings(
 ): Promise<INodeExecutionData[]> {
 	const sport = context.getNodeParameter('sport', itemIndex) as string;
 	const season = validateSeason(context.getNodeParameter('season', itemIndex) as number, context);
+	const returnAll = context.getNodeParameter('returnAll', itemIndex) as boolean;
+	const limit = returnAll
+		? undefined
+		: validateLimit(context.getNodeParameter('limit', itemIndex) as number, context);
 	const query: IDataObject = {};
 	let path: string;
 	let field: string;
@@ -29,7 +35,8 @@ export async function executeRankings(
 		field = 'players';
 		label = 'Rankings Get Rankings';
 		const options = context.getNodeParameter('rankingsOptions', itemIndex, {}) as IDataObject;
-		if (Number(options.playerId) > 0) query.player = Number(options.playerId);
+		const playerId = optionalPositiveInteger(options.playerId, context, 'Player ID');
+		if (playerId !== undefined) query.player = playerId;
 		if (typeof options.expertIds === 'string' && options.expertIds) {
 			query.filters = parseNumericIds(options.expertIds, ':', context, 'Expert IDs');
 		}
@@ -85,8 +92,6 @@ export async function executeRankings(
 
 	const response = await fantasyProsApiRequest.call(context, 'GET', path, query);
 	let entities = fanOutWithContext(response, field, context, label);
-	if (!(context.getNodeParameter('returnAll', itemIndex) as boolean)) {
-		entities = entities.slice(0, context.getNodeParameter('limit', itemIndex) as number);
-	}
+	if (limit !== undefined) entities = entities.slice(0, limit);
 	return entities.map((json) => ({ json, pairedItem: { item: itemIndex } }));
 }

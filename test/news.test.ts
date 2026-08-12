@@ -93,6 +93,14 @@ describe('News Get Many', () => {
 		const malformed = createExecuteContext(newsParameters(), [{ items: {} }]);
 		await expect(node.execute.call(malformed)).rejects.toThrow(/expected 'items' to be an array/);
 	});
+
+	it('rejects invalid IDs before requesting', async () => {
+		for (const newsOptions of [{ playerId: -1 }, { mlbamId: 1.5 }]) {
+			const context = createExecuteContext(newsParameters({ sport: 'mlb', newsOptions }));
+			await expect(node.execute.call(context)).rejects.toThrow(/positive integer/);
+			expect(context.request).not.toHaveBeenCalled();
+		}
+	});
 });
 
 describe('News UI metadata', () => {
