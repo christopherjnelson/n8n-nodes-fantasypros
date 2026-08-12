@@ -140,12 +140,29 @@ describe('Player operations', () => {
 			playerCompareParameters({ season: 2011 }),
 			playerCompareParameters({ week: 23 }),
 			playerGetManyParameters({ options: { updatedSince: '2026-02-30' } }),
+			playerGetManyParameters({ options: { playerId: -1 } }),
+			playerGetManyParameters({ returnAll: false, limit: 0 }),
 		];
 		for (const parameters of cases) {
 			const context = createExecuteContext(parameters);
 			await expect(node.execute.call(context)).rejects.toThrow();
 			expect(context.request).not.toHaveBeenCalled();
 		}
+	});
+
+	it('exposes every external ID value in the OpenAPI enum', () => {
+		const options = playerDescription.find((property) => property.name === 'options');
+		const externalIds = Array.isArray(options?.options)
+			? options.options.find((property) => property.name === 'externalIds')
+			: undefined;
+		expect(externalIds?.options).toHaveLength(21);
+		expect(externalIds?.options).toEqual(
+			expect.arrayContaining([
+				expect.objectContaining({ value: 'fantasydraft' }),
+				expect.objectContaining({ value: 'rts' }),
+				expect.objectContaining({ value: 'xmlteam' }),
+			]),
+		);
 	});
 
 	it('rejects malformed collection response shapes', async () => {

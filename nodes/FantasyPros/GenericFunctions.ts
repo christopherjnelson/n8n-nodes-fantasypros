@@ -162,6 +162,28 @@ export function validateWeek(value: number, context: IExecuteFunctions): number 
 	return value;
 }
 
+export function validateLimit(value: number, context: IExecuteFunctions, maximum?: number): number {
+	if (!Number.isInteger(value) || value < 1 || (maximum !== undefined && value > maximum)) {
+		const range =
+			maximum === undefined ? 'a positive integer' : `an integer from 1 through ${maximum}`;
+		throw new NodeOperationError(context.getNode(), `Limit must be ${range}`);
+	}
+	return value;
+}
+
+export function optionalPositiveInteger(
+	value: unknown,
+	context: IExecuteFunctions,
+	label: string,
+): number | undefined {
+	if (value === undefined || value === '' || value === 0 || value === '0') return undefined;
+	const parsed = Number(value);
+	if (!Number.isInteger(parsed) || parsed < 1) {
+		throw new NodeOperationError(context.getNode(), `${label} must be a positive integer`);
+	}
+	return parsed;
+}
+
 export function isRecord(value: unknown): value is IDataObject {
 	return typeof value === 'object' && value !== null && !Array.isArray(value);
 }

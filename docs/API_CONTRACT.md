@@ -31,3 +31,5 @@ The Rankings `filters` descriptions call the value comma-delimited, while the li
 The NBA Projection `team_id` examples use team abbreviations, while its referenced `digitComma` schema requires comma-delimited numeric IDs. This node follows the schema and validates numeric team IDs.
 
 The live Projection API can return a collection as `null` when its accompanying `count` is zero, although the OpenAPI response schema declares an array. The node treats only this explicit zero-count form as an empty collection; other non-array values remain errors.
+
+The MVP brief calls for a News recency or updated-since filter, but the current News OpenAPI operation exposes no such filter. It exposes `order_by` (`created` or `updated`) only. The node follows the live specification and does not invent an unsupported query parameter.

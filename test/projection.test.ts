@@ -175,6 +175,7 @@ describe('Projection operations', () => {
 
 	it('rejects invalid dates, seasons, weeks, IDs, league keys, operations, and response shapes', async () => {
 		const cases = [
+			projectionParameters('getNfl', { returnAll: false, limit: 0 }),
 			projectionParameters('getNfl', { season: 2011 }),
 			projectionParameters('getNfl', { nflWeek: 23 }),
 			projectionParameters('getNfl', { nflOptions: { playerIds: '1:nope' } }),

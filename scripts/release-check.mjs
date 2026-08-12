@@ -20,6 +20,10 @@ function hasPlaceholder(value) {
 const packageJson = JSON.parse(read('package.json'));
 const publishWorkflow = read('.github/workflows/publish.yml');
 const readme = read('README.md');
+const codex = JSON.parse(read('nodes/FantasyPros/FantasyPros.node.json'));
+
+if (packageJson.name !== 'n8n-nodes-fantasypros') fail('package name must be n8n-nodes-fantasypros');
+if (packageJson.version !== '0.1.0') fail('MVP version must remain 0.1.0');
 
 if (!/^n8n-nodes-[a-z0-9][a-z0-9._-]*$/.test(packageJson.name ?? '')) {
 	fail('package.json name must be the final lowercase n8n-nodes-* package name');
@@ -48,7 +52,21 @@ if (packageJson.peerDependencies?.['n8n-workflow'] !== '*') {
 	fail('n8n-workflow must remain a host-provided peer dependency');
 }
 if (packageJson.n8n?.strict !== true) fail('package.json n8n.strict must be true');
-if (!packageJson.n8n?.nodes?.length) fail('package.json n8n.nodes must register at least one built node');
+if (
+	JSON.stringify(packageJson.n8n?.nodes) !==
+	JSON.stringify(['dist/nodes/FantasyPros/FantasyPros.node.js'])
+) {
+	fail('package.json must register only the built FantasyPros node');
+}
+if (
+	JSON.stringify(packageJson.n8n?.credentials) !==
+	JSON.stringify(['dist/credentials/FantasyProsApi.credentials.js'])
+) {
+	fail('package.json must register only the built FantasyPros API credential');
+}
+if (JSON.stringify(packageJson.files) !== JSON.stringify(['dist'])) {
+	fail('package files allowlist must contain only dist');
+}
 if (packageJson.publishConfig?.access !== 'public') fail('publishConfig.access must be public');
 if (packageJson.engines?.node !== '>=22.22.0') fail('engines.node must match the current >=22.22.0 baseline');
 if (packageJson.scripts?.release !== 'n8n-node release') fail('release script must use n8n-node release');
@@ -63,12 +81,34 @@ if (!publishWorkflow.includes('secrets.NPM_TOKEN')) {
 	fail('publish workflow must retain the first-publication NPM_TOKEN fallback');
 }
 
-for (const heading of ['## Installation', '## Compatibility', '## Credentials', '## Operations', '## License']) {
+for (const heading of [
+	'## Installation',
+	'## Compatibility',
+	'## Credentials',
+	'## Operations',
+	'## Output behavior',
+	'## Errors and rate limits',
+	'## Resources',
+	'## Version history',
+	'## License',
+]) {
 	if (!readme.includes(heading)) fail(`README is missing ${heading}`);
 }
 if (hasPlaceholder(readme)) fail('README still contains a placeholder');
 
-for (const path of ['LICENSE.md', 'CHANGELOG.md', 'RELEASING.md']) {
+if (codex.node !== 'n8n-nodes-fantasypros.fantasyPros') {
+	fail('source codex identity must be n8n-nodes-fantasypros.fantasyPros');
+}
+const supportedCategories = new Set(['Data & Storage', 'Development']);
+if (
+	!Array.isArray(codex.categories) ||
+	!codex.categories.length ||
+	codex.categories.some((category) => !supportedCategories.has(category))
+) {
+	fail('source codex metadata must use the supported Data & Storage/Development categories');
+}
+
+for (const path of ['LICENSE.md', 'CHANGELOG.md', 'RELEASING.md', 'docs/PR10_HUMAN_REVIEW.md']) {
 	if (!existsSync(resolve(root, path))) fail(`${path} is required`);
 }
 
