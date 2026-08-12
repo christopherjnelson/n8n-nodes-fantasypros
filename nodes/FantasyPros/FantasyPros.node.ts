@@ -17,6 +17,7 @@ import {
 	validateWeek,
 } from './GenericFunctions';
 import {
+	injuryDescription,
 	newsDescription,
 	playerDescription,
 	projectionDescription,
@@ -25,6 +26,7 @@ import {
 import { executeRankings } from './actions/Rankings';
 import { executeProjection } from './actions/Projection';
 import { executeNews } from './actions/News';
+import { executeInjury } from './actions/Injury';
 
 export class FantasyPros implements INodeType {
 	description: INodeTypeDescription = {
@@ -47,6 +49,7 @@ export class FantasyPros implements INodeType {
 				type: 'options',
 				noDataExpression: true,
 				options: [
+					{ name: 'Injury', value: 'injury' },
 					{ name: 'News', value: 'news' },
 					{ name: 'Player', value: 'player' },
 					{ name: 'Projection', value: 'projection' },
@@ -55,6 +58,7 @@ export class FantasyPros implements INodeType {
 				default: 'player',
 			},
 			...playerDescription,
+			...injuryDescription,
 			...newsDescription,
 			...projectionDescription,
 			...rankingsDescription,
@@ -69,6 +73,10 @@ export class FantasyPros implements INodeType {
 			try {
 				const resource = this.getNodeParameter('resource', itemIndex) as string;
 				const operation = this.getNodeParameter('operation', itemIndex) as string;
+				if (resource === 'injury') {
+					output.push(...(await executeInjury(this, itemIndex, operation)));
+					continue;
+				}
 				if (resource === 'news') {
 					output.push(...(await executeNews(this, itemIndex, operation)));
 					continue;

@@ -127,6 +127,18 @@ export function newsParameters(overrides: ParameterMap = {}): ParameterMap {
 	};
 }
 
+export function injuryParameters(overrides: ParameterMap = {}): ParameterMap {
+	return {
+		resource: 'injury',
+		operation: 'getMany',
+		sport: 'nfl',
+		returnAll: false,
+		limit: 50,
+		injuryOptions: {},
+		...overrides,
+	};
+}
+
 export function rejected(error: IDataObject): IDataObject {
 	return { __reject: error };
 }
