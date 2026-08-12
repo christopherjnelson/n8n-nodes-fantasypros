@@ -16,7 +16,8 @@ import {
 	validateSeason,
 	validateWeek,
 } from './GenericFunctions';
-import { playerDescription } from './descriptions';
+import { playerDescription, rankingsDescription } from './descriptions';
+import { executeRankings } from './actions/Rankings';
 
 export class FantasyPros implements INodeType {
 	description: INodeTypeDescription = {
@@ -38,10 +39,14 @@ export class FantasyPros implements INodeType {
 				name: 'resource',
 				type: 'options',
 				noDataExpression: true,
-				options: [{ name: 'Player', value: 'player' }],
+				options: [
+					{ name: 'Player', value: 'player' },
+					{ name: 'Ranking', value: 'rankings' },
+				],
 				default: 'player',
 			},
 			...playerDescription,
+			...rankingsDescription,
 		],
 	};
 
@@ -53,6 +58,10 @@ export class FantasyPros implements INodeType {
 			try {
 				const resource = this.getNodeParameter('resource', itemIndex) as string;
 				const operation = this.getNodeParameter('operation', itemIndex) as string;
+				if (resource === 'rankings') {
+					output.push(...(await executeRankings(this, itemIndex, operation)));
+					continue;
+				}
 				if (resource !== 'player') {
 					throw new NodeOperationError(this.getNode(), `Unsupported resource: ${resource}`);
 				}

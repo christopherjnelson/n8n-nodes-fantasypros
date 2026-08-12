@@ -90,6 +90,20 @@ export function requireArrayField(
 	return collection as IDataObject[];
 }
 
+export function fanOutWithContext(
+	value: unknown,
+	field: string,
+	context: IExecuteFunctions,
+	label: string,
+): IDataObject[] {
+	const record = requireRecord(value, context, label);
+	const collection = requireArrayField(record, field, context, label);
+	const responseContext = Object.fromEntries(
+		Object.entries(record).filter(([key]) => key !== field),
+	);
+	return collection.map((entity) => ({ ...entity, _fantasyPros: responseContext }));
+}
+
 export function parseNumericIds(
 	value: string,
 	delimiter: ':' | ',',

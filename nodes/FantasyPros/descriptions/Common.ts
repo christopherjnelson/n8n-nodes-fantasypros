@@ -23,3 +23,58 @@ export const positionOptions: Record<string, INodePropertyOptions[]> = {
 };
 
 export const currentSeason = new Date().getUTCFullYear();
+
+export const rankingTypeOptions: Record<string, INodePropertyOptions[]> = {
+	nfl: [
+		'WW',
+		'WAIVER',
+		'ROS',
+		'DRAFT',
+		'PRESEASON',
+		'SLEEPERS',
+		'ADP',
+		'BEST',
+		'PROSPECT',
+		'PRO',
+		'DEVY',
+		'ROOKIES',
+		'DYNADP',
+		'RKADP',
+		'BESTADP',
+		'DYNASTY',
+		'PRE',
+		'DRAFTERS',
+		'MOCK',
+	].map((value) => ({ name: value, value })),
+	mlb: ['DRAFT', 'PRESEASON', 'ROS', 'DK', 'DYN', 'STK', 'PRO', 'PROSPECT', 'ADP', 'WEEKLY'].map(
+		(value) => ({ name: value, value }),
+	),
+	nba: ['ROS', 'DK', 'ADP', 'DRAFT', 'DYNASTY'].map((value) => ({ name: value, value })),
+	nhl: ['DRAFT', 'ROS', 'ADP'].map((value) => ({ name: value, value })),
+};
+
+export const scoringOptions: Record<string, INodePropertyOptions[]> = {
+	nfl: [
+		{ name: 'Half PPR', value: 'HALF' },
+		{ name: 'PPR', value: 'PPR' },
+		{ name: 'Standard', value: 'STD' },
+	],
+	nba: [
+		{ name: 'Points', value: 'PTS' },
+		{ name: 'Rotisserie', value: 'ROTO' },
+	],
+};
+
+export const siteEligibilityOptions: INodePropertyOptions[] = [
+	{ name: 'CBS', value: 'C' },
+	{ name: 'CBS Sports', value: 'CBSSP' },
+	{ name: 'ESPN', value: 'E' },
+	{ name: 'Fantrax', value: 'FANSP' },
+	{ name: 'Yahoo', value: 'Y' },
+	{ name: 'All Options', value: 'AO' },
+	{ name: 'Site 1', value: 1 },
+	{ name: 'Site 2', value: 2 },
+	{ name: 'Site 3', value: 3 },
+	{ name: 'Site 103', value: 103 },
+	{ name: 'Site 122', value: 122 },
+];
