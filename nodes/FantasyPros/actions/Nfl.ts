@@ -6,6 +6,28 @@ import {
 } from 'n8n-workflow';
 import { fanOutWithContext, fantasyProsApiRequest, validateSeason } from '../GenericFunctions';
 
+const playerPointsPositions = new Set([
+	'ALL',
+	'QB',
+	'RB',
+	'WR',
+	'TE',
+	'OT',
+	'OL',
+	'OG',
+	'C',
+	'DE',
+	'DT',
+	'LB',
+	'CB',
+	'S',
+	'DB',
+	'K',
+	'P',
+	'DST',
+]);
+const playerPointsScoring = new Set(['STD', 'PPR', 'HALF']);
+
 function validatePlayerPointsWeek(
 	value: number,
 	context: IExecuteFunctions,
@@ -42,11 +64,22 @@ export async function executeNfl(
 	if (end < start) {
 		throw new NodeOperationError(context.getNode(), 'End Week must not be earlier than Start Week');
 	}
+	const position = context.getNodeParameter('position', itemIndex) as string;
+	if (!playerPointsPositions.has(position)) {
+		throw new NodeOperationError(
+			context.getNode(),
+			'Position is not supported for NFL Player Points',
+		);
+	}
+	const scoring = context.getNodeParameter('scoring', itemIndex) as string;
+	if (!playerPointsScoring.has(scoring)) {
+		throw new NodeOperationError(context.getNode(), 'Scoring must be Standard, PPR, or Half PPR');
+	}
 	const query: IDataObject = {
 		start,
 		end,
-		position: context.getNodeParameter('position', itemIndex) as string,
-		scoring: context.getNodeParameter('scoring', itemIndex) as string,
+		position,
+		scoring,
 	};
 	if (context.getNodeParameter('minimalResponse', itemIndex) as boolean) query.min = 'true';
 

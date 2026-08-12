@@ -52,6 +52,8 @@ describe('NFL Get Player Points', () => {
 			[nflParameters({ startWeek: 0 }), /Start Week must be/],
 			[nflParameters({ endWeek: 23 }), /End Week must be/],
 			[nflParameters({ startWeek: 1.5 }), /Start Week must be/],
+			[nflParameters({ position: 'FLEX' }), /Position is not supported/],
+			[nflParameters({ scoring: 'POINTS' }), /Scoring must be/],
 			[nflParameters({ limit: 0 }), /Limit must be/],
 			[nflParameters({ limit: 1.5 }), /Limit must be/],
 			[nflParameters({ operation: 'unknown' }), /Unsupported NFL operation/],
