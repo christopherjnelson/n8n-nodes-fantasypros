@@ -68,6 +68,25 @@ export function playerCompareParameters(overrides: ParameterMap = {}): Parameter
 	};
 }
 
+export function rankingsParameters(operation: string, overrides: ParameterMap = {}): ParameterMap {
+	return {
+		resource: 'rankings',
+		operation,
+		sport: 'nfl',
+		season: 2026,
+		position: operation === 'getConsensusRankings' ? 'RB' : '',
+		rankingType: '',
+		scoring: '',
+		returnAll: true,
+		rankingsOptions: {},
+		useDraftersType: false,
+		siteEligibility: '',
+		consensusOptions: {},
+		includeOverall: false,
+		...overrides,
+	};
+}
+
 export function rejected(error: IDataObject): IDataObject {
 	return { __reject: error };
 }

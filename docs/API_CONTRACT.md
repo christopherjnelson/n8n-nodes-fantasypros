@@ -23,3 +23,7 @@ The live [OpenAPI documentation](https://api.fantasypros.com/public/v2/docs/) is
 | MLB        | Get Lineups            | `GET /mlb/lineups`                         |
 
 PGA, NCAAF, triggers, writes, custom league synchronization, and other FantasyPros functionality are outside the MVP.
+
+## Specification discrepancies
+
+The Rankings `filters` descriptions call the value comma-delimited, while the live OpenAPI schema pattern and examples require colon-delimited numeric IDs. This node follows the authoritative schema pattern and serializes expert IDs with colons.
