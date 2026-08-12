@@ -16,8 +16,9 @@ import {
 	validateSeason,
 	validateWeek,
 } from './GenericFunctions';
-import { playerDescription, rankingsDescription } from './descriptions';
+import { playerDescription, projectionDescription, rankingsDescription } from './descriptions';
 import { executeRankings } from './actions/Rankings';
+import { executeProjection } from './actions/Projection';
 
 export class FantasyPros implements INodeType {
 	description: INodeTypeDescription = {
@@ -41,11 +42,13 @@ export class FantasyPros implements INodeType {
 				noDataExpression: true,
 				options: [
 					{ name: 'Player', value: 'player' },
+					{ name: 'Projection', value: 'projection' },
 					{ name: 'Ranking', value: 'rankings' },
 				],
 				default: 'player',
 			},
 			...playerDescription,
+			...projectionDescription,
 			...rankingsDescription,
 		],
 	};
@@ -58,6 +61,10 @@ export class FantasyPros implements INodeType {
 			try {
 				const resource = this.getNodeParameter('resource', itemIndex) as string;
 				const operation = this.getNodeParameter('operation', itemIndex) as string;
+				if (resource === 'projection') {
+					output.push(...(await executeProjection(this, itemIndex, operation)));
+					continue;
+				}
 				if (resource === 'rankings') {
 					output.push(...(await executeRankings(this, itemIndex, operation)));
 					continue;

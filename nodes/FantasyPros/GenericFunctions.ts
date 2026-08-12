@@ -81,6 +81,7 @@ export function requireArrayField(
 ): IDataObject[] {
 	const record = requireRecord(value, context, label);
 	const collection = record[field];
+	if (collection === null && Number(record.count) === 0) return [];
 	if (!Array.isArray(collection) || !collection.every(isRecord)) {
 		throw new NodeOperationError(
 			context.getNode(),

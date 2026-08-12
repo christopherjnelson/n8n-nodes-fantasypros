@@ -27,3 +27,7 @@ PGA, NCAAF, triggers, writes, custom league synchronization, and other FantasyPr
 ## Specification discrepancies
 
 The Rankings `filters` descriptions call the value comma-delimited, while the live OpenAPI schema pattern and examples require colon-delimited numeric IDs. This node follows the authoritative schema pattern and serializes expert IDs with colons.
+
+The NBA Projection `team_id` examples use team abbreviations, while its referenced `digitComma` schema requires comma-delimited numeric IDs. This node follows the schema and validates numeric team IDs.
+
+The live Projection API can return a collection as `null` when its accompanying `count` is zero, although the OpenAPI response schema declares an array. The node treats only this explicit zero-count form as an empty collection; other non-array values remain errors.
