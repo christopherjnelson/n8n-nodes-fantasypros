@@ -1,0 +1,18 @@
+{
+	"node": "n8n-nodes-fantasypros.fantasyPros",
+	"nodeVersion": "1.0",
+	"codexVersion": "1.0",
+	"categories": ["Data & Storage", "Development"],
+	"resources": {
+		"credentialDocumentation": [
+			{
+				"url": "https://github.com/christopherjnelson/n8n-nodes-fantasypros#credentials"
+			}
+		],
+		"primaryDocumentation": [
+			{
+				"url": "https://github.com/christopherjnelson/n8n-nodes-fantasypros"
+			}
+		]
+	}
+}

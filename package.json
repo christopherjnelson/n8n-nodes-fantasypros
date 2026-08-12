@@ -1,9 +1,9 @@
 {
-	"name": "n8n-nodes-community-template",
+	"name": "n8n-nodes-fantasypros",
 	"version": "0.1.0",
-	"description": "Reusable starter package for verified n8n community nodes",
+	"description": "n8n community node for the official FantasyPros Public API v2",
 	"license": "MIT",
-	"homepage": "https://github.com/christopherjnelson/n8n-community-node-template#readme",
+	"homepage": "https://github.com/christopherjnelson/n8n-nodes-fantasypros#readme",
 	"keywords": [
 		"n8n-community-node-package"
 	],
@@ -13,7 +13,7 @@
 	},
 	"repository": {
 		"type": "git",
-		"url": "https://github.com/christopherjnelson/n8n-community-node-template.git"
+		"url": "https://github.com/christopherjnelson/n8n-nodes-fantasypros.git"
 	},
 	"scripts": {
 		"build": "n8n-node build",
@@ -21,6 +21,9 @@
 		"dev": "n8n-node dev",
 		"lint": "n8n-node lint",
 		"lint:fix": "n8n-node lint --fix",
+		"format:check": "prettier --check credentials nodes test docs README.md package.json .github/workflows",
+		"typecheck": "tsc --noEmit",
+		"test": "vitest run",
 		"release:check": "node scripts/release-check.mjs",
 		"release": "n8n-node release",
 		"prepublishOnly": "n8n-node prerelease"
@@ -32,12 +35,10 @@
 		"n8nNodesApiVersion": 1,
 		"strict": true,
 		"credentials": [
-			"dist/credentials/GithubIssuesApi.credentials.js",
-			"dist/credentials/GithubIssuesOAuth2Api.credentials.js"
+			"dist/credentials/FantasyProsApi.credentials.js"
 		],
 		"nodes": [
-			"dist/nodes/GithubIssues/GithubIssues.node.js",
-			"dist/nodes/Example/Example.node.js"
+			"dist/nodes/FantasyPros/FantasyPros.node.js"
 		]
 	},
 	"devDependencies": {
@@ -45,7 +46,8 @@
 		"eslint": "9.32.0",
 		"prettier": "3.6.2",
 		"release-it": "20.2.0",
-		"typescript": "5.9.2"
+		"typescript": "5.9.2",
+		"vitest": "3.2.4"
 	},
 	"peerDependencies": {
 		"n8n-workflow": "*"
