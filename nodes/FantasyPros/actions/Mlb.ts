@@ -21,7 +21,10 @@ export async function executeMlb(
 	if (operation !== 'getLineups') {
 		throw new NodeOperationError(context.getNode(), `Unsupported MLB operation: ${operation}`);
 	}
-	const startDate = context.getNodeParameter('startDate', itemIndex) as string;
+	const startDate = context.getNodeParameter('startDate', itemIndex);
+	if (typeof startDate !== 'string') {
+		throw new NodeOperationError(context.getNode(), 'Start Date must be a date or ISO date-time');
+	}
 	if (startDate.length > 10 && (startDate[10] !== 'T' || Number.isNaN(Date.parse(startDate)))) {
 		throw new NodeOperationError(
 			context.getNode(),

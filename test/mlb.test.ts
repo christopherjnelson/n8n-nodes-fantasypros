@@ -109,6 +109,7 @@ describe('MLB Get Lineups', () => {
 		const cases = [
 			[mlbParameters({ startDate: '2026-02-30' }), /valid calendar date/],
 			[mlbParameters({ startDate: '08-12-2026' }), /YYYY-MM-DD/],
+			[mlbParameters({ startDate: 20260812 }), /must be a date or ISO date-time/],
 			[mlbParameters({ startDate: '2026-08-12-not-iso' }), /valid date or ISO date-time/],
 			[mlbParameters({ period: 'SPRING' }), /Period must be/],
 			[mlbParameters({ limit: 0 }), /Limit must be/],
