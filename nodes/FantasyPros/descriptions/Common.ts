@@ -8,13 +8,42 @@ export const sportOptions: INodePropertyOptions[] = [
 ];
 
 export const positionOptions: Record<string, INodePropertyOptions[]> = {
-	nfl: ['ALL', 'FLX', 'OP', 'QB', 'RB', 'WR', 'TE', 'K', 'DST', 'IDP', 'DL', 'LB', 'DB'].map(
+	nfl: [
+		'ALL',
+		'FLX',
+		'OP',
+		'QB',
+		'RB',
+		'WR',
+		'TE',
+		'K',
+		'DST',
+		'IDP',
+		'DL',
+		'LB',
+		'DB',
+		'TK',
+		'TQB',
+		'TRB',
+		'TWR',
+		'TTE',
+		'TOL',
+		'HC',
+		'P',
+		'RK',
+		'OT',
+		'OG',
+		'IOL',
+		'C',
+		'IDL',
+		'DE',
+		'DT',
+		'CB',
+		'S',
+	].map((value) => ({ name: value, value })),
+	mlb: ['ALL', 'H', 'P', '1B', '2B', '3B', 'SS', 'C', 'OF', 'SP', 'RP', 'DH', 'LF', 'CF', 'RF'].map(
 		(value) => ({ name: value, value }),
 	),
-	mlb: ['ALL', 'H', 'P', '1B', '2B', '3B', 'SS', 'C', 'OF', 'SP', 'RP', 'DH'].map((value) => ({
-		name: value,
-		value,
-	})),
 	nba: ['ALL', 'PG', 'SG', 'SF', 'PF', 'G', 'F', 'C', 'SGF', 'PFC'].map((value) => ({
 		name: value,
 		value,

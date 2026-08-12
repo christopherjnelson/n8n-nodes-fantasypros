@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { FantasyPros } from '../nodes/FantasyPros/FantasyPros.node';
 import { rankingsDescription } from '../nodes/FantasyPros/descriptions/RankingsDescription';
+import { positionOptions } from '../nodes/FantasyPros/descriptions/Common';
 import { createExecuteContext, rankingsParameters } from './helpers';
 
 const node = new FantasyPros();
@@ -231,5 +232,10 @@ describe('Ranking UI metadata', () => {
 			operation: ['getRankings'],
 			sport: ['mlb'],
 		});
+		expect(positionOptions.nfl.map(({ value }) => value)).toContain('IOL');
+		expect(positionOptions.nfl.map(({ value }) => value)).toContain('CB');
+		expect(positionOptions.mlb.map(({ value }) => value)).toEqual(
+			expect.arrayContaining(['LF', 'CF', 'RF']),
+		);
 	});
 });
