@@ -17,6 +17,9 @@ export async function executeNews(
 	const sport = context.getNodeParameter('sport', itemIndex) as string;
 	const returnAll = context.getNodeParameter('returnAll', itemIndex) as boolean;
 	const limit = returnAll ? 100 : (context.getNodeParameter('limit', itemIndex) as number);
+	if (!Number.isInteger(limit) || limit < 1 || limit > 100) {
+		throw new NodeOperationError(context.getNode(), 'Limit must be an integer from 1 through 100');
+	}
 	const query: IDataObject = { limit };
 	const options = context.getNodeParameter('newsOptions', itemIndex, {}) as IDataObject;
 	if (typeof options.category === 'string' && options.category) query.category = options.category;

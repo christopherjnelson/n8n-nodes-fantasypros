@@ -85,6 +85,11 @@ describe('News Get Many', () => {
 		const unsupported = createExecuteContext(newsParameters({ operation: 'unknown' }));
 		await expect(node.execute.call(unsupported)).rejects.toThrow(/Unsupported News operation/);
 		expect(unsupported.request).not.toHaveBeenCalled();
+		for (const limit of [0, 101, 1.5]) {
+			const invalidLimit = createExecuteContext(newsParameters({ limit }));
+			await expect(node.execute.call(invalidLimit)).rejects.toThrow(/Limit must be an integer/);
+			expect(invalidLimit.request).not.toHaveBeenCalled();
+		}
 		const malformed = createExecuteContext(newsParameters(), [{ items: {} }]);
 		await expect(node.execute.call(malformed)).rejects.toThrow(/expected 'items' to be an array/);
 	});
