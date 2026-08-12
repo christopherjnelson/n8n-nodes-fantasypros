@@ -87,6 +87,34 @@ export function rankingsParameters(operation: string, overrides: ParameterMap = 
 	};
 }
 
+export function projectionParameters(
+	operation: string,
+	overrides: ParameterMap = {},
+): ParameterMap {
+	return {
+		resource: 'projection',
+		operation,
+		season: 2026,
+		position: 'QB',
+		nflProjectionPeriod: 'weekly',
+		nflWeek: 1,
+		nflOptions: {},
+		mlbProjectionType: 'preseason',
+		mlbDate: '',
+		mlbWeek: 1,
+		mlbPosition: '',
+		mlbOptions: {},
+		nbaProjectionType: 'preseason',
+		nbaDate: '',
+		nbaPosition: '',
+		nbaStatisticsType: 'total',
+		nbaPreciseValues: false,
+		nbaOptions: {},
+		returnAll: true,
+		...overrides,
+	};
+}
+
 export function rejected(error: IDataObject): IDataObject {
 	return { __reject: error };
 }
