@@ -18,6 +18,7 @@ import {
 } from './GenericFunctions';
 import {
 	injuryDescription,
+	mlbDescription,
 	newsDescription,
 	nflDescription,
 	playerDescription,
@@ -29,6 +30,7 @@ import { executeProjection } from './actions/Projection';
 import { executeNews } from './actions/News';
 import { executeInjury } from './actions/Injury';
 import { executeNfl } from './actions/Nfl';
+import { executeMlb } from './actions/Mlb';
 
 export class FantasyPros implements INodeType {
 	description: INodeTypeDescription = {
@@ -52,6 +54,7 @@ export class FantasyPros implements INodeType {
 				noDataExpression: true,
 				options: [
 					{ name: 'Injury', value: 'injury' },
+					{ name: 'MLB', value: 'mlb' },
 					{ name: 'News', value: 'news' },
 					{ name: 'NFL', value: 'nfl' },
 					{ name: 'Player', value: 'player' },
@@ -62,6 +65,7 @@ export class FantasyPros implements INodeType {
 			},
 			...playerDescription,
 			...injuryDescription,
+			...mlbDescription,
 			...newsDescription,
 			...nflDescription,
 			...projectionDescription,
@@ -77,6 +81,10 @@ export class FantasyPros implements INodeType {
 			try {
 				const resource = this.getNodeParameter('resource', itemIndex) as string;
 				const operation = this.getNodeParameter('operation', itemIndex) as string;
+				if (resource === 'mlb') {
+					output.push(...(await executeMlb(this, itemIndex, operation)));
+					continue;
+				}
 				if (resource === 'injury') {
 					output.push(...(await executeInjury(this, itemIndex, operation)));
 					continue;

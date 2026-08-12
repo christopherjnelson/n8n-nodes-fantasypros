@@ -1,0 +1,28 @@
+{
+	"league_key": "",
+	"season": "2026",
+	"start": "2026-08-12",
+	"end": "2026-08-12",
+	"count": 1,
+	"games": [
+		{
+			"game_id": "game-confirmed",
+			"event_id": "event-confirmed",
+			"status": "scheduled",
+			"teams": { "BAL": { "record": "60-58" }, "TEX": { "record": "62-56" } },
+			"away_probable_id": 4655,
+			"home_probable_id": 6995,
+			"hitters": {
+				"BAL": { "1": { "player_id": "46268", "rank_vbr": 149, "position": "2B" } }
+			},
+			"pitchers": {
+				"TEX": {
+					"player_id": "6995",
+					"player_name": "Sample Pitcher",
+					"rank_vbr": 42,
+					"record": "8-4"
+				}
+			}
+		}
+	]
+}

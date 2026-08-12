@@ -155,6 +155,19 @@ export function nflParameters(overrides: ParameterMap = {}): ParameterMap {
 	};
 }
 
+export function mlbParameters(overrides: ParameterMap = {}): ParameterMap {
+	return {
+		resource: 'mlb',
+		operation: 'getLineups',
+		startDate: '2026-08-12',
+		period: 'REG',
+		projected: false,
+		returnAll: false,
+		limit: 50,
+		...overrides,
+	};
+}
+
 export function rejected(error: IDataObject): IDataObject {
 	return { __reject: error };
 }
