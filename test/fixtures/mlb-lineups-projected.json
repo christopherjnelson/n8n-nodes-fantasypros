@@ -1,0 +1,28 @@
+{
+	"league_key": "",
+	"season": "2026",
+	"start": "2026-08-12",
+	"end": "2026-08-12",
+	"count": 1,
+	"games": [
+		{
+			"game_id": "game-projected",
+			"event_id": "event-projected",
+			"status": "scheduled",
+			"teams": { "NYY": { "record": "" }, "BOS": { "record": "" } },
+			"away_probable_id": 100,
+			"home_probable_id": 200,
+			"hitters": {
+				"NYY": { "1": { "player_id": "300", "rank_vbr": 10, "position": "SS" } }
+			},
+			"pitchers": {
+				"BOS": {
+					"player_id": "200",
+					"player_name": "Projected Pitcher",
+					"rank_vbr": 25,
+					"record": ""
+				}
+			}
+		}
+	]
+}
