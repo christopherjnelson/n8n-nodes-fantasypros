@@ -139,6 +139,22 @@ export function injuryParameters(overrides: ParameterMap = {}): ParameterMap {
 	};
 }
 
+export function nflParameters(overrides: ParameterMap = {}): ParameterMap {
+	return {
+		resource: 'nfl',
+		operation: 'getPlayerPoints',
+		season: 2026,
+		startWeek: 1,
+		endWeek: 18,
+		position: 'ALL',
+		scoring: 'STD',
+		minimalResponse: false,
+		returnAll: false,
+		limit: 50,
+		...overrides,
+	};
+}
+
 export function rejected(error: IDataObject): IDataObject {
 	return { __reject: error };
 }

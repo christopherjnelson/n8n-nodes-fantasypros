@@ -19,6 +19,7 @@ import {
 import {
 	injuryDescription,
 	newsDescription,
+	nflDescription,
 	playerDescription,
 	projectionDescription,
 	rankingsDescription,
@@ -27,6 +28,7 @@ import { executeRankings } from './actions/Rankings';
 import { executeProjection } from './actions/Projection';
 import { executeNews } from './actions/News';
 import { executeInjury } from './actions/Injury';
+import { executeNfl } from './actions/Nfl';
 
 export class FantasyPros implements INodeType {
 	description: INodeTypeDescription = {
@@ -51,6 +53,7 @@ export class FantasyPros implements INodeType {
 				options: [
 					{ name: 'Injury', value: 'injury' },
 					{ name: 'News', value: 'news' },
+					{ name: 'NFL', value: 'nfl' },
 					{ name: 'Player', value: 'player' },
 					{ name: 'Projection', value: 'projection' },
 					{ name: 'Ranking', value: 'rankings' },
@@ -60,6 +63,7 @@ export class FantasyPros implements INodeType {
 			...playerDescription,
 			...injuryDescription,
 			...newsDescription,
+			...nflDescription,
 			...projectionDescription,
 			...rankingsDescription,
 		],
@@ -79,6 +83,10 @@ export class FantasyPros implements INodeType {
 				}
 				if (resource === 'news') {
 					output.push(...(await executeNews(this, itemIndex, operation)));
+					continue;
+				}
+				if (resource === 'nfl') {
+					output.push(...(await executeNfl(this, itemIndex, operation)));
 					continue;
 				}
 				if (resource === 'projection') {
