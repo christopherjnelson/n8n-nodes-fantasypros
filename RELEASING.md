@@ -2,13 +2,12 @@
 
 This repository publishes only from `.github/workflows/publish.yml`. Never run `npm publish` locally for a version intended for n8n verification.
 
-## Before development
+## Before release review
 
-1. Create the final public GitHub repository from this template.
-2. Choose the final npm name beginning with `n8n-nodes-` and confirm it is available.
-3. Replace all `<...>` placeholders in `package.json`, the README, metadata, and source files.
-4. Keep `.github/workflows/publish.yml` on the default `main` branch from the beginning.
-5. Do not create a version tag yet.
+1. Confirm `n8n-nodes-fantasypros` is available on npm.
+2. Keep `.github/workflows/publish.yml` on the default `main` branch.
+3. Complete a human release-candidate review.
+4. Do not create a version tag without explicit release authorization.
 
 ## Release gate
 
@@ -23,7 +22,7 @@ npm pack --dry-run
 git diff --check
 ```
 
-Also install the packed tarball in a disposable n8n instance and verify credentials, operations, outputs, errors, and any trigger behavior. Replace the starter README with `README_TEMPLATE.md` and document installation, compatibility, credentials, operations, resources, and license.
+Also install the packed tarball in a disposable n8n instance and verify credentials, operations, outputs, and errors. Confirm the README documents installation, compatibility, credentials, operations, resources, and license.
 
 ## First publication as 0.1.0
 
@@ -34,7 +33,7 @@ npm requires a package to exist before it can have a Trusted Publisher. Bootstra
 3. Confirm `package.json` is `0.1.0`, CI is green, and `npm run release:check` passes.
 4. Create and push an annotated `v0.1.0` tag on the validated release commit.
 5. Watch the Publish workflow through the final release step.
-6. Verify `npm view <package>@0.1.0 dist.attestations --json` contains SLSA provenance.
+6. Verify `npm view n8n-nodes-fantasypros@0.1.0 dist.attestations --json` contains SLSA provenance.
 7. Create the matching GitHub release.
 
 The temporary token authenticates the first GitHub Actions run; GitHub still supplies the provenance identity.
