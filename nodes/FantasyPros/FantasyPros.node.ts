@@ -1,11 +1,22 @@
 import {
 	NodeConnectionTypes,
 	NodeOperationError,
+	type IDataObject,
 	type IExecuteFunctions,
 	type INodeExecutionData,
 	type INodeType,
 	type INodeTypeDescription,
 } from 'n8n-workflow';
+import {
+	fantasyProsApiRequest,
+	parseNumericIds,
+	requireArrayField,
+	requireRecord,
+	validateDate,
+	validateSeason,
+	validateWeek,
+} from './GenericFunctions';
+import { playerDescription } from './descriptions';
 
 export class FantasyPros implements INodeType {
 	description: INodeTypeDescription = {
@@ -14,7 +25,7 @@ export class FantasyPros implements INodeType {
 		icon: { light: 'file:fantasyPros.svg', dark: 'file:fantasyPros.dark.svg' },
 		group: ['transform'],
 		version: 1,
-		subtitle: '={{$parameter["operation"] || "Setup"}}',
+		subtitle: '={{$parameter["operation"] + ": " + $parameter["resource"]}}',
 		description: 'Use the official FantasyPros Public API v2',
 		defaults: { name: 'FantasyPros' },
 		usableAsTool: true,
@@ -23,19 +34,112 @@ export class FantasyPros implements INodeType {
 		credentials: [{ name: 'fantasyProsApi', required: true }],
 		properties: [
 			{
-				displayName: 'Scaffold Only',
-				name: 'scaffoldNotice',
-				type: 'notice',
-				default: '',
-				description: 'Player operations will replace this temporary scaffold in the next change',
+				displayName: 'Resource',
+				name: 'resource',
+				type: 'options',
+				noDataExpression: true,
+				options: [{ name: 'Player', value: 'player' }],
+				default: 'player',
 			},
+			...playerDescription,
 		],
 	};
 
 	async execute(this: IExecuteFunctions): Promise<INodeExecutionData[][]> {
-		throw new NodeOperationError(
-			this.getNode(),
-			'This temporary scaffold does not expose an executable operation yet.',
-		);
+		const output: INodeExecutionData[] = [];
+		const inputItems = this.getInputData();
+
+		for (let itemIndex = 0; itemIndex < inputItems.length; itemIndex++) {
+			try {
+				const resource = this.getNodeParameter('resource', itemIndex) as string;
+				const operation = this.getNodeParameter('operation', itemIndex) as string;
+				if (resource !== 'player') {
+					throw new NodeOperationError(this.getNode(), `Unsupported resource: ${resource}`);
+				}
+
+				if (operation === 'getMany') {
+					const sport = this.getNodeParameter('sport', itemIndex) as string;
+					const options = this.getNodeParameter('options', itemIndex, {}) as IDataObject;
+					const query: IDataObject = {};
+					if (Number(options.playerId) > 0) query.player = Number(options.playerId);
+					if (typeof options.updatedSince === 'string' && options.updatedSince) {
+						query.update = validateDate(options.updatedSince.slice(0, 10), this, 'Updated Since');
+					}
+					if (typeof options.ecr === 'string' && options.ecr) query.ecr = options.ecr;
+					if (Array.isArray(options.externalIds) && options.externalIds.length) {
+						query.external_ids = options.externalIds.join(':');
+					}
+					if (options.showPositionalRank === true) query.show = 'pos_rank';
+
+					const response = await fantasyProsApiRequest.call(
+						this,
+						'GET',
+						`/${sport}/players`,
+						query,
+					);
+					let players = requireArrayField(response, 'players', this, 'Player Get Many');
+					if (!(this.getNodeParameter('returnAll', itemIndex) as boolean)) {
+						const limit = this.getNodeParameter('limit', itemIndex) as number;
+						players = players.slice(0, limit);
+					}
+					output.push(...players.map((json) => ({ json, pairedItem: { item: itemIndex } })));
+					continue;
+				}
+
+				if (operation === 'compare') {
+					const sport = this.getNodeParameter('sport', itemIndex) as string;
+					const players = parseNumericIds(
+						this.getNodeParameter('playerIds', itemIndex) as string,
+						':',
+						this,
+						'Player IDs',
+						{ min: 2, max: 4 },
+					);
+					const season = validateSeason(this.getNodeParameter('season', itemIndex) as number, this);
+					const query: IDataObject = {
+						players,
+						position: this.getNodeParameter('position', itemIndex) as string,
+						year: season,
+					};
+					if (sport === 'nfl')
+						query.week = validateWeek(this.getNodeParameter('week', itemIndex) as number, this);
+					const options = this.getNodeParameter('compareOptions', itemIndex, {}) as IDataObject;
+					if (typeof options.expertIds === 'string' && options.expertIds) {
+						query.experts = parseNumericIds(options.expertIds, ':', this, 'Expert IDs');
+					}
+					if (typeof options.rankingType === 'string' && options.rankingType)
+						query.ranking_type = options.rankingType;
+					if (typeof options.details === 'string' && options.details)
+						query.details = options.details;
+
+					const response = await fantasyProsApiRequest.call(
+						this,
+						'GET',
+						`/${sport}/compare-players`,
+						query,
+					);
+					output.push({
+						json: requireRecord(response, this, 'Player Compare'),
+						pairedItem: { item: itemIndex },
+					});
+					continue;
+				}
+
+				throw new NodeOperationError(this.getNode(), `Unsupported Player operation: ${operation}`);
+			} catch (error) {
+				if (!this.continueOnFail()) {
+					throw new NodeOperationError(
+						this.getNode(),
+						error instanceof Error ? error : new Error(String(error)),
+					);
+				}
+				output.push({
+					json: { error: error instanceof Error ? error.message : String(error) },
+					pairedItem: { item: itemIndex },
+				});
+			}
+		}
+
+		return [output];
 	}
 }

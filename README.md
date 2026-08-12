@@ -1,6 +1,6 @@
 # n8n-nodes-fantasypros
 
-An n8n community node for the official FantasyPros Public API v2. The package is under active MVP development; the first public operations are added after the initial package scaffold.
+An n8n community node for the official FantasyPros Public API v2. The package is under active MVP development.
 
 ## Installation
 
@@ -18,7 +18,12 @@ Users must provide their own key and comply with the terms and entitlements of t
 
 ## Operations
 
-This scaffold registers the FantasyPros node and credential only. The planned MVP covers Player, Rankings, Projection, News, Injury, NFL player points, and MLB lineups through twelve read operations described in [the API contract](docs/API_CONTRACT.md).
+Current operations:
+
+- Player → Get Many: returns one n8n item per player, with Return All/Limit controls
+- Player → Compare: returns one item containing the API's nested ranking groups plus optional player and expert detail maps
+
+The planned MVP also covers Rankings, Projection, News, Injury, NFL player points, and MLB lineups through the routes described in [the API contract](docs/API_CONTRACT.md).
 
 ## Development
 
@@ -32,6 +37,8 @@ npm run build
 ```
 
 The standard suite uses mocked data and never requires a live API key.
+
+Live tests are opt-in. Export `FANTASY_PROS_API_KEY` (or `FANTASYPROS_API_KEY`) and run `npm run test:live`. Live Player Compare discovers current IDs from Player Get Many rather than keeping fragile IDs in source.
 
 ## Resources
 
