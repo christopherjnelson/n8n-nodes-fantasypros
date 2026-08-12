@@ -115,6 +115,18 @@ export function projectionParameters(
 	};
 }
 
+export function newsParameters(overrides: ParameterMap = {}): ParameterMap {
+	return {
+		resource: 'news',
+		operation: 'getMany',
+		sport: 'nfl',
+		returnAll: false,
+		limit: 50,
+		newsOptions: {},
+		...overrides,
+	};
+}
+
 export function rejected(error: IDataObject): IDataObject {
 	return { __reject: error };
 }
