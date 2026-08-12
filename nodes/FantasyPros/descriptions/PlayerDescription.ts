@@ -1,0 +1,202 @@
+import type { INodeProperties } from 'n8n-workflow';
+import { currentSeason, positionOptions, sportOptions } from './Common';
+
+const playerShow = { resource: ['player'] };
+const getManyShow = { ...playerShow, operation: ['getMany'] };
+const compareShow = { ...playerShow, operation: ['compare'] };
+
+export const playerDescription: INodeProperties[] = [
+	{
+		displayName: 'Operation',
+		name: 'operation',
+		type: 'options',
+		noDataExpression: true,
+		displayOptions: { show: playerShow },
+		options: [
+			{
+				name: 'Compare',
+				value: 'compare',
+				action: 'Compare players',
+				description: 'Compare expert rankings for two to four players',
+			},
+			{
+				name: 'Get Many',
+				value: 'getMany',
+				action: 'Get many players',
+				description: 'Get many players and their metadata',
+			},
+		],
+		default: 'getMany',
+	},
+	{
+		displayName: 'Sport',
+		name: 'sport',
+		type: 'options',
+		noDataExpression: true,
+		options: sportOptions,
+		default: 'nfl',
+		displayOptions: { show: playerShow },
+		description: 'Sport to query',
+	},
+	{
+		displayName: 'Return All',
+		name: 'returnAll',
+		type: 'boolean',
+		default: false,
+		displayOptions: { show: getManyShow },
+		description: 'Whether to return all results or only up to a given limit',
+	},
+	{
+		displayName: 'Limit',
+		name: 'limit',
+		type: 'number',
+		typeOptions: { minValue: 1 },
+		default: 50,
+		displayOptions: { show: { ...getManyShow, returnAll: [false] } },
+		description: 'Max number of results to return',
+	},
+	{
+		displayName: 'Options',
+		name: 'options',
+		type: 'collection',
+		placeholder: 'Add Option',
+		default: {},
+		displayOptions: { show: getManyShow },
+		options: [
+			{
+				displayName: 'Consensus Ranking',
+				name: 'ecr',
+				type: 'options',
+				options: [
+					{ name: 'Excluded', value: 'excluded' },
+					{ name: 'Included', value: 'included' },
+				],
+				default: 'included',
+				description: 'Whether results must be included in or excluded from consensus rankings',
+			},
+			{
+				displayName: 'External IDs',
+				name: 'externalIds',
+				type: 'multiOptions',
+				options: [
+					{ name: 'CBS', value: 'cbs' },
+					{ name: 'DraftKings', value: 'draftkings' },
+					{ name: 'ESPN', value: 'espn' },
+					{ name: 'FanDuel', value: 'fanduel' },
+					{ name: 'MLBAM', value: 'mlbam' },
+					{ name: 'NBA', value: 'nba' },
+					{ name: 'NFL', value: 'nfl' },
+					{ name: 'Yahoo', value: 'yahoo' },
+				],
+				default: [],
+				description: 'External platform IDs to include, serialized with colons',
+			},
+			{
+				displayName: 'Player ID',
+				name: 'playerId',
+				type: 'number',
+				typeOptions: { minValue: 1 },
+				default: 0,
+				description: 'FantasyPros player ID to filter on',
+			},
+			{
+				displayName: 'Show Positional Rank',
+				name: 'showPositionalRank',
+				type: 'boolean',
+				default: false,
+				description: 'Whether to include positional consensus rank in addition to overall rank',
+			},
+			{
+				displayName: 'Updated Since',
+				name: 'updatedSince',
+				type: 'dateTime',
+				default: '',
+				description: 'Only return players updated since this date (sent as YYYY-MM-DD)',
+			},
+		],
+	},
+	{
+		displayName: 'Player IDs',
+		name: 'playerIds',
+		type: 'string',
+		default: '',
+		required: true,
+		placeholder: 'e.g. 17240:23133',
+		displayOptions: { show: compareShow },
+		description: 'Two to four FantasyPros player IDs separated by colons, commas, or spaces',
+	},
+	...Object.entries(positionOptions).map(
+		// Each generated property has a sport-specific static default.
+		// eslint-disable-next-line n8n-nodes-base/node-param-default-missing
+		([sport, options]): INodeProperties => ({
+			displayName: 'Position',
+			name: 'position',
+			type: 'options',
+			options,
+			default: options[0].value,
+			required: true,
+			displayOptions: { show: { ...compareShow, sport: [sport] } },
+			description: 'Position shared by the players being compared',
+		}),
+	),
+	{
+		displayName: 'Season',
+		name: 'season',
+		type: 'number',
+		typeOptions: { minValue: 2012, numberStepSize: 1 },
+		default: currentSeason,
+		displayOptions: { show: compareShow },
+		description: 'Four-digit season year',
+	},
+	{
+		displayName: 'Week',
+		name: 'week',
+		type: 'number',
+		typeOptions: { minValue: 0, maxValue: 22, numberStepSize: 1 },
+		default: 0,
+		displayOptions: { show: { ...compareShow, sport: ['nfl'] } },
+		description: 'NFL week, where 0 represents preseason',
+	},
+	{
+		displayName: 'Options',
+		name: 'compareOptions',
+		type: 'collection',
+		placeholder: 'Add Option',
+		default: {},
+		displayOptions: { show: compareShow },
+		options: [
+			{
+				displayName: 'Detail Level',
+				name: 'details',
+				type: 'options',
+				options: [
+					{ name: 'All', value: 'all' },
+					{ name: 'Experts', value: 'experts' },
+					{ name: 'Players', value: 'players' },
+				],
+				default: 'all',
+				description: 'Additional detail objects to include',
+			},
+			{
+				displayName: 'Expert IDs',
+				name: 'expertIds',
+				type: 'string',
+				default: '',
+				placeholder: 'e.g. 22:6586',
+				description: 'FantasyPros expert IDs separated by colons, commas, or spaces',
+			},
+			{
+				displayName: 'Ranking Type',
+				name: 'rankingType',
+				type: 'options',
+				options: [
+					{ name: 'Draft', value: 'draft' },
+					{ name: 'Rest of Season', value: 'ros' },
+					{ name: 'Weekly', value: 'weekly' },
+				],
+				default: 'draft',
+				description: 'Ranking set to compare',
+			},
+		],
+	},
+];

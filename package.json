@@ -21,9 +21,10 @@
 		"dev": "n8n-node dev",
 		"lint": "n8n-node lint",
 		"lint:fix": "n8n-node lint --fix",
-		"format:check": "prettier --check credentials nodes test docs README.md package.json .github/workflows",
+		"format:check": "prettier --check credentials nodes test docs README.md package.json eslint.config.mjs .github/workflows",
 		"typecheck": "tsc --noEmit",
 		"test": "vitest run",
+		"test:live": "FANTASYPROS_LIVE_TESTS=1 vitest run test/live",
 		"release:check": "node scripts/release-check.mjs",
 		"release": "n8n-node release",
 		"prepublishOnly": "n8n-node prerelease"
