@@ -1,4 +1,9 @@
-import type { IAuthenticateGeneric, ICredentialType, INodeProperties } from 'n8n-workflow';
+import type {
+	IAuthenticateGeneric,
+	ICredentialTestRequest,
+	ICredentialType,
+	INodeProperties,
+} from 'n8n-workflow';
 
 export class FantasyProsApi implements ICredentialType {
 	name = 'fantasyProsApi';
@@ -24,7 +29,7 @@ export class FantasyProsApi implements ICredentialType {
 			},
 		},
 	};
-	test = {
+	test: ICredentialTestRequest = {
 		request: {
 			baseURL: 'https://api.fantasypros.com/public/v2/json',
 			url: '/nfl/players',

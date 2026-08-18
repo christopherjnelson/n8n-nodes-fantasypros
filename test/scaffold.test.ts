@@ -20,4 +20,21 @@ describe('FantasyPros scaffold', () => {
 			'x-api-key': '={{$credentials.apiKey}}',
 		});
 	});
+
+	it('configures credential test and links it via testedBy on the node', () => {
+		const node = new FantasyPros();
+		const credential = new FantasyProsApi();
+
+		expect(credential.test).toBeDefined();
+		expect(credential.test?.request?.baseURL).toBe('https://api.fantasypros.com/public/v2/json');
+		expect(credential.test?.request?.url).toBe('/nfl/players');
+
+		expect(node.description.credentials).toEqual([
+			{
+				name: 'fantasyProsApi',
+				required: true,
+				testedBy: 'fantasyProsApi',
+			},
+		]);
+	});
 });

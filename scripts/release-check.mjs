@@ -23,7 +23,9 @@ const readme = read('README.md');
 const codex = JSON.parse(read('nodes/FantasyPros/FantasyPros.node.json'));
 
 if (packageJson.name !== 'n8n-nodes-fantasypros') fail('package name must be n8n-nodes-fantasypros');
-if (packageJson.version !== '0.1.0') fail('MVP version must remain 0.1.0');
+if (!/^\d+\.\d+\.\d+(-[0-9A-Za-z.-]+)?$/.test(packageJson.version ?? '')) {
+	fail('package.json version must be a valid semantic version');
+}
 
 if (!/^n8n-nodes-[a-z0-9][a-z0-9._-]*$/.test(packageJson.name ?? '')) {
 	fail('package.json name must be the final lowercase n8n-nodes-* package name');

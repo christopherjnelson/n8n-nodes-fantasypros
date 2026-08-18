@@ -94,7 +94,8 @@ Set `FANTASY_PROS_API_KEY` (preferred) or `FANTASYPROS_API_KEY` in the environme
 
 ## Version history
 
-- `0.1.0` (unreleased): complete MVP with seven resources and twelve read operations.
+- `0.1.1`: Fixed credential test linking for n8n Creator Portal automated validation.
+- `0.1.0`: Complete MVP with seven resources and twelve read operations.
 
 ## License
 

@@ -47,7 +47,13 @@ export class FantasyPros implements INodeType {
 		usableAsTool: true,
 		inputs: [NodeConnectionTypes.Main],
 		outputs: [NodeConnectionTypes.Main],
-		credentials: [{ name: 'fantasyProsApi', required: true }],
+		credentials: [
+			{
+				name: 'fantasyProsApi',
+				required: true,
+				testedBy: 'fantasyProsApi',
+			},
+		],
 		properties: [
 			{
 				displayName: 'Resource',

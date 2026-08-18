@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.1.1] - 2026-08-18
+
+### Fixed
+
+- Added `testedBy: 'fantasyProsApi'` to node credentials and explicit `ICredentialTestRequest` type to FantasyPros API credentials for n8n Creator Portal automated validation.
+
 ## [0.1.0] - 2026-08-18
 
 ### Added
