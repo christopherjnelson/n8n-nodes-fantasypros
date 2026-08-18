@@ -1,6 +1,6 @@
 {
 	"name": "n8n-nodes-fantasypros",
-	"version": "0.1.1",
+	"version": "0.1.2",
 	"description": "n8n community node for the official FantasyPros Public API v2",
 	"license": "MIT",
 	"homepage": "https://github.com/christopherjnelson/n8n-nodes-fantasypros#readme",

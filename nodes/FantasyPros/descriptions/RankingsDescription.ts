@@ -1,4 +1,4 @@
-import type { INodeProperties, INodePropertyOptions } from 'n8n-workflow';
+import type { INodeProperties } from 'n8n-workflow';
 import {
 	currentSeason,
 	positionOptions,
@@ -12,30 +12,10 @@ const resourceShow = { resource: ['rankings'] };
 const rankingsShow = { ...resourceShow, operation: ['getRankings'] };
 const consensusShow = { ...resourceShow, operation: ['getConsensusRankings'] };
 const expertsShow = { ...resourceShow, operation: ['getExperts'] };
-
-function sportSpecificOptions(
-	name: string,
-	displayName: string,
-	optionsBySport: Record<string, INodePropertyOptions[]>,
-	operations: string[],
-	required = false,
-	allowUnset = false,
-): INodeProperties[] {
-	return Object.entries(optionsBySport).map(
-		// Every generated property has a static default derived from its first option.
-		// eslint-disable-next-line n8n-nodes-base/node-param-default-missing
-		([sport, options]): INodeProperties => ({
-			displayName,
-			name,
-			type: 'options',
-			options: allowUnset ? [{ name: 'Not Set', value: '' }, ...options] : options,
-			default: allowUnset ? '' : options[0].value,
-			required,
-			displayOptions: { show: { resource: ['rankings'], operation: operations, sport: [sport] } },
-			description: `${displayName} supported for the selected sport`,
-		}),
-	);
-}
+const consensusAndExpertsShow = {
+	resource: ['rankings'],
+	operation: ['getConsensusRankings', 'getExperts'],
+};
 
 const sharedCollectionControls: INodeProperties[] = [
 	{
@@ -105,24 +85,136 @@ export const rankingsDescription: INodeProperties[] = [
 		displayOptions: { show: resourceShow },
 		description: 'Four-digit season year',
 	},
-	...sportSpecificOptions('position', 'Position', positionOptions, ['getConsensusRankings'], true),
-	...sportSpecificOptions('position', 'Position', positionOptions, ['getExperts'], false, true),
-	...sportSpecificOptions(
-		'rankingType',
-		'Ranking Type',
-		rankingTypeOptions,
-		['getConsensusRankings', 'getExperts'],
-		false,
-		true,
-	),
-	...sportSpecificOptions(
-		'scoring',
-		'Scoring',
-		scoringOptions,
-		['getConsensusRankings', 'getExperts'],
-		false,
-		true,
-	),
+	{
+		displayName: 'Position',
+		name: 'position',
+		type: 'options',
+		options: positionOptions.nfl,
+		default: 'ALL',
+		required: true,
+		displayOptions: { show: { ...consensusShow, sport: ['nfl'] } },
+		description: 'Position supported for the selected sport',
+	},
+	{
+		displayName: 'Position',
+		name: 'position',
+		type: 'options',
+		options: positionOptions.mlb,
+		default: 'ALL',
+		required: true,
+		displayOptions: { show: { ...consensusShow, sport: ['mlb'] } },
+		description: 'Position supported for the selected sport',
+	},
+	{
+		displayName: 'Position',
+		name: 'position',
+		type: 'options',
+		options: positionOptions.nba,
+		default: 'ALL',
+		required: true,
+		displayOptions: { show: { ...consensusShow, sport: ['nba'] } },
+		description: 'Position supported for the selected sport',
+	},
+	{
+		displayName: 'Position',
+		name: 'position',
+		type: 'options',
+		options: positionOptions.nhl,
+		default: 'ALL',
+		required: true,
+		displayOptions: { show: { ...consensusShow, sport: ['nhl'] } },
+		description: 'Position supported for the selected sport',
+	},
+	{
+		displayName: 'Position',
+		name: 'position',
+		type: 'options',
+		options: [{ name: 'Not Set', value: '' }, ...positionOptions.nfl],
+		default: '',
+		displayOptions: { show: { ...expertsShow, sport: ['nfl'] } },
+		description: 'Position supported for the selected sport',
+	},
+	{
+		displayName: 'Position',
+		name: 'position',
+		type: 'options',
+		options: [{ name: 'Not Set', value: '' }, ...positionOptions.mlb],
+		default: '',
+		displayOptions: { show: { ...expertsShow, sport: ['mlb'] } },
+		description: 'Position supported for the selected sport',
+	},
+	{
+		displayName: 'Position',
+		name: 'position',
+		type: 'options',
+		options: [{ name: 'Not Set', value: '' }, ...positionOptions.nba],
+		default: '',
+		displayOptions: { show: { ...expertsShow, sport: ['nba'] } },
+		description: 'Position supported for the selected sport',
+	},
+	{
+		displayName: 'Position',
+		name: 'position',
+		type: 'options',
+		options: [{ name: 'Not Set', value: '' }, ...positionOptions.nhl],
+		default: '',
+		displayOptions: { show: { ...expertsShow, sport: ['nhl'] } },
+		description: 'Position supported for the selected sport',
+	},
+	{
+		displayName: 'Ranking Type',
+		name: 'rankingType',
+		type: 'options',
+		options: [{ name: 'Not Set', value: '' }, ...rankingTypeOptions.nfl],
+		default: '',
+		displayOptions: { show: { ...consensusAndExpertsShow, sport: ['nfl'] } },
+		description: 'Ranking Type supported for the selected sport',
+	},
+	{
+		displayName: 'Ranking Type',
+		name: 'rankingType',
+		type: 'options',
+		options: [{ name: 'Not Set', value: '' }, ...rankingTypeOptions.mlb],
+		default: '',
+		displayOptions: { show: { ...consensusAndExpertsShow, sport: ['mlb'] } },
+		description: 'Ranking Type supported for the selected sport',
+	},
+	{
+		displayName: 'Ranking Type',
+		name: 'rankingType',
+		type: 'options',
+		options: [{ name: 'Not Set', value: '' }, ...rankingTypeOptions.nba],
+		default: '',
+		displayOptions: { show: { ...consensusAndExpertsShow, sport: ['nba'] } },
+		description: 'Ranking Type supported for the selected sport',
+	},
+	{
+		displayName: 'Ranking Type',
+		name: 'rankingType',
+		type: 'options',
+		options: [{ name: 'Not Set', value: '' }, ...rankingTypeOptions.nhl],
+		default: '',
+		displayOptions: { show: { ...consensusAndExpertsShow, sport: ['nhl'] } },
+		description: 'Ranking Type supported for the selected sport',
+	},
+	{
+		displayName: 'Scoring',
+		name: 'scoring',
+		type: 'options',
+		options: [{ name: 'Not Set', value: '' }, ...scoringOptions.nfl],
+		default: '',
+		displayOptions: { show: { ...consensusAndExpertsShow, sport: ['nfl'] } },
+		description: 'Scoring supported for the selected sport',
+	},
+	{
+		displayName: 'Scoring',
+		name: 'scoring',
+		type: 'options',
+		options: [{ name: 'Not Set', value: '' }, ...scoringOptions.nba],
+		default: '',
+		displayOptions: { show: { ...consensusAndExpertsShow, sport: ['nba'] } },
+		description: 'Scoring supported for the selected sport',
+	},
 	...sharedCollectionControls,
 	{
 		displayName: 'Options',

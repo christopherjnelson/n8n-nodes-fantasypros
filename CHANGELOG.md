@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.1.2] - 2026-08-18
+
+### Fixed
+
+- Replaced dynamic description property mappings with static property definitions to resolve ESLint `node-param-default-missing` violations flagged by `@n8n/scan-community-package`.
+
 ## [0.1.1] - 2026-08-18
 
 ### Fixed
